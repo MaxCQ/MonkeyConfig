@@ -139,8 +139,9 @@ function MonkeyConfig() {
      */
     function render() {
         var html = '<div class="__MonkeyConfig_container">' +
-            '<h1>' + data.title + '</h1>' +
-            '<table>';
+            '<h1>' + data.title + '</h1>';
+        html += data.description || '';
+        html += '<table>';
 
         for (var name in params) {
             html += MonkeyConfig.formatters['tr'](name, params[name]);}
@@ -158,21 +159,21 @@ function MonkeyConfig() {
                     'id="__MonkeyConfig_button_cancel">' +
                     '<img src="data:image/png;base64,' +
                         MonkeyConfig.res.icons.cancel + '" />&nbsp;' +
-                    'Cancel</button>';
+                    '关闭</button>';
                 break;
             case 'defaults':
                 html += '<button type="button" ' +
                     'id="__MonkeyConfig_button_defaults">' +
                     '<img src="data:image/png;base64,' +
                         MonkeyConfig.res.icons.arrow_undo + '" />&nbsp;' +
-                    'Set&nbsp;Defaults</button>';
+                    '恢复默认值</button>';
                 break;
             case 'save':
                 html += '<button type="button" ' +
                     'id="__MonkeyConfig_button_save">' +
                     '<img src="data:image/png;base64,' +
                         MonkeyConfig.res.icons.tick + '" />&nbsp;' +
-                    'Save</button>';
+                    '保存</button>';
                 break;
             }
             
@@ -182,6 +183,8 @@ function MonkeyConfig() {
         html += '</tr></table></td></tr>';
         
         html += "</table><div>";
+
+        html += data.author || '';
 
         return html;
     }
@@ -303,7 +306,7 @@ function MonkeyConfig() {
         
         GM_setValue(storageKey, JSON.stringify(values));
         
-        close();
+        //close();
         
         if (data.onSave)
             data.onSave(values);
@@ -421,7 +424,7 @@ function MonkeyConfig() {
             overlay.style.height = window.innerHeight + 'px';
             overlay.style.zIndex = 9999;
             
-            body.appendChild(overlay);         
+            //body.appendChild(overlay);         
             body.appendChild(openLayer);
             
             /* 
@@ -430,10 +433,12 @@ function MonkeyConfig() {
             openLayer.innerHTML = render();
             
             /* Position the layer in the center of the viewport */
-            openLayer.style.left = Math.round((window.innerWidth -
-                    openLayer.clientWidth) / 2) + 'px';
-            openLayer.style.top = Math.round((window.innerHeight -
-                    openLayer.clientHeight) / 2) + 'px';
+            // openLayer.style.left = Math.round((window.innerWidth -
+            //         openLayer.clientWidth) / 2) + 'px';
+            // openLayer.style.top = Math.round((window.innerHeight -
+            //         openLayer.clientHeight) / 2) + 'px';
+            openLayer.style.right = '30px';
+            openLayer.style.top = '80px';
             openLayer.style.zIndex = 9999;
             
             container = document.querySelector('.__MonkeyConfig_container');
@@ -503,30 +508,32 @@ function MonkeyConfig() {
                 iframe.height = container.clientHeight;
 
                 /* Position the layer in the center of the viewport */
-                openLayer.style.left = Math.round((window.innerWidth -
-                        openLayer.clientWidth) / 2) + 'px';
-                openLayer.style.top = Math.round((window.innerHeight -
-                        openLayer.clientHeight) / 2) + 'px';
+                openLayer.style.right = '30px';
+                openLayer.style.top = '80px';
                 openLayer.style.zIndex = 9999;
                 
                 openDone();
             }, false);
 
             setTimeout(function () {
-                iframe.width = container.clientWidth;
-                iframe.height = container.clientHeight;
+                if(container){
+                    iframe.width = container.clientWidth;
+                    iframe.height = container.clientHeight;
+                }
                 
                 /* Position the layer in the center of the viewport */
-                openLayer.style.left = Math.round((window.innerWidth -
-                        openLayer.clientWidth) / 2) + 'px';
-                openLayer.style.top = Math.round((window.innerHeight -
-                        openLayer.clientHeight) / 2) + 'px';
+                openLayer.style.right = '30px';
+                openLayer.style.top = '80px';
                 openLayer.style.zIndex = 9999;
             }, 0);
             
-            body.appendChild(overlay);         
+            // body.appendChild(overlay);         
             body.appendChild(openLayer);
             openLayer.appendChild(iframe);
+
+            overlay.onclick = () => {
+                close();
+            }
         
             break;
         }
@@ -545,7 +552,7 @@ function MonkeyConfig() {
             openLayer = undefined;
             
             if (overlay) {
-                overlay.parentNode.removeChild(overlay);
+                // overlay.parentNode.removeChild(overlay);
                 overlay = undefined;
             }
         }
